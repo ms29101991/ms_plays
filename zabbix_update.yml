@@ -1,0 +1,36 @@
+---
+- name: zabbix agent 6 upgrade playbook
+  hosts: all
+  become: yes
+  tasks:
+     - name: copy zabbix rpm to remote servers
+       copy:
+         src: /home/ansible/zabbix-agent-6.0.22-release1.el6.x86_64.rpm
+         dest: /home/ansible
+
+     - name: To stop zabbix agent
+       service:
+         name: zabbix-agent
+         state: stopped
+
+     - name:  Upgrade zabbix package
+       command: rpm -Uvh zabbix-agent-6.0.22-release1.el6.x86_64.rpm
+
+     - name: Replace a line
+       lineinfile:
+         path: /etc/zabbix/zabbix_agentd.conf
+         regexp: ^HostMetadata=Linux
+         line: HostMetadata=Linuxsmrc
+
+     - name: Insert a line after pattern
+       lineinfile:
+         path: /etc/zabbix/zabbix_agentd.conf
+         line: AllowKey=system.run[*]
+         insertafter: 85
+       tags:
+               - configuration
+
+     - name: To start zabbix agent
+       service:
+         name: zabbix-agent
+         state: started
