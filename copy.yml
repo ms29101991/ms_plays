@@ -1,0 +1,9 @@
+---
+- name: Copy RPM package directly from source to destination
+  hosts: awx-tower   
+  tasks:
+    - name: Copy RPM package directly to destination host
+      copy:
+        src: /home/admin/zabbix-agent-7.0.0-release1.el9.x86_64.rpm
+        dest: /tmp/zabbix-agent-7.0.0-release1.el9.x86_64.rpm
+      delegate_to: tgt1 
